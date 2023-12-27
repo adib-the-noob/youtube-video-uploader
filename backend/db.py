@@ -24,4 +24,7 @@ def get_db():
         db.close()
 
 
+def create_db():
+    return Base.metadata.create_all(bind=engine)
+
 db_dependency = Annotated[Session, Depends(get_db)]

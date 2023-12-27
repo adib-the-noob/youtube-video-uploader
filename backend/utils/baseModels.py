@@ -1,8 +1,8 @@
 from datetime import datetime
 from sqlalchemy import Column, DateTime
-from db import Base, Session
+from db import Session
 
-class BaseModel(Base):
+class BaseModelMixin:
 	__abstract__ = True
 
 	created_at = Column(DateTime, default=datetime.utcnow)
@@ -12,4 +12,4 @@ class BaseModel(Base):
 		db.add(self)
 		db.commit()
 		db.refresh(self)
-		return self
+		return self	

@@ -1,25 +1,28 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.responses import JSONResponse
 
+# routers
+from authentication.routes import router as auth_router
+
+
+# table creations
+from db import Base, engine
 from authentication.models import User
-from db import db_dependency
+from app import create_db
 
-app = FastAPI()
+Base.metadata.create_all(bind=engine)
 
-@app.get('/')
+app = FastAPI() 
+app.include_router(auth_router)
+ 
+
+@app.get('/Bro')
 async def root():
     return JSONResponse({
         "message" : "welcome Bro!"
     })  
 
-@app.get('/add')
-async def add_user(db: db_dependency):
-    user1 = User(
-        full_name="ADIB",
-        email="adib"
-    ).save(
-        db
-    )
-    return JSONResponse({
-        "message" : "DOne"        
-    })
+
+@app.on_event('startup')
+async def startup_event():
+    await create_db()
