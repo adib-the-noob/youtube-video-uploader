@@ -1,15 +1,20 @@
-from fastapi import APIRouter
-from fastapi.responses import JSONResponse
+from typing import Annotated
+
+from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse, Response
+from fastapi.security import OAuth2PasswordRequestForm
 
 from authentication.schemas import (
-    UserRegister
+    UserRegister,
+    UserLogin
 )
 from db import db_dependency
 from authentication.models import (
     User
 )
 from authentication.auth_utils import (
-    get_password_hash
+    get_password_hash,
+    authenticate_user
 )
 
 router = APIRouter()
@@ -38,7 +43,7 @@ async def user_register(user : UserRegister, db : db_dependency):
                 "data" : {
                     "id" : user_obj.id,
                     "full_name" : user_obj.full_name,
-                    "created_at" : str(user_obj.created_at)
+                    "phone_number" : user_obj.phone_number
                 }
             })
         return JSONResponse({
@@ -48,3 +53,15 @@ async def user_register(user : UserRegister, db : db_dependency):
         return JSONResponse({
             'error' : str(e)
         })
+
+
+@router.post('/login')
+async def user_login(db : db_dependency, form_data : Annotated[OAuth2PasswordRequestForm, Depends()]):
+    user = authenticate_user(db, form_data.username, form_data.password)
+    if not user:
+        return JSONResponse({
+            "message" : "BRo!"
+        })
+    return JSONResponse({
+        "message" : "Bro, just logged in!"
+    })

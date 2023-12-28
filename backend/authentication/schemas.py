@@ -7,3 +7,6 @@ class UserRegister(BaseModel):
     password : str
 
 
+class UserLogin(BaseModel):
+    phone_number : str
+    password : str
