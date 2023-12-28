@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer
 from utils.baseModels import BaseModelMixin
 
-from db import Base
+from db import Base, Session
 
 class User(Base, BaseModelMixin):
     __tablename__ = "users"
@@ -15,3 +15,9 @@ class User(Base, BaseModelMixin):
 
     def __str__(self):
         return f"{self.full_name}"
+
+    def save(self, db: Session):
+        db.add(self)
+        db.commit()
+        db.refresh(self)
+        

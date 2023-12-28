@@ -6,9 +6,8 @@ from authentication.routes import router as auth_router
 
 
 # table creations
-from db import Base, engine
+from db import Base, engine, create_db
 from authentication.models import User
-from app import create_db
 
 Base.metadata.create_all(bind=engine)
 
@@ -25,4 +24,5 @@ async def root():
 
 @app.on_event('startup')
 async def startup_event():
-    await create_db()
+    create_db()
+    print("DB is Connected!")
