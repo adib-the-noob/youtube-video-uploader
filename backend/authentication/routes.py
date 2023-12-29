@@ -4,11 +4,11 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse, Response
 from fastapi.security import OAuth2PasswordRequestForm
 
+from db import db_dependency
 from authentication.schemas import (
     UserRegister,
-    UserLogin
+    Token
 )
-from db import db_dependency
 from authentication.models import (
     User
 )
@@ -16,6 +16,7 @@ from authentication.auth_utils import (
     get_password_hash,
     authenticate_user
 )
+from authentication.jwt_utils import create_access_token
 
 router = APIRouter()
 
@@ -55,13 +56,18 @@ async def user_register(user : UserRegister, db : db_dependency):
         })
 
 
-@router.post('/login')
+@router.post('/login', response_model=Token)
 async def user_login(db : db_dependency, form_data : Annotated[OAuth2PasswordRequestForm, Depends()]):
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
         return JSONResponse({
-            "message" : "BRo!"
+            "message" : "User Not Found!"
         })
+    token = create_access_token(data={
+        "user_id" : user.id,
+        "sub" : user.phone_number
+    })
     return JSONResponse({
-        "message" : "Bro, just logged in!"
+        'access_token' : token,
+        'token_type' : 'bearer'
     })
