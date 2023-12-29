@@ -1,9 +1,8 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
 # routers
 from authentication.routes import router as auth_router
-
 
 # table creations
 from db import Base, engine, create_db

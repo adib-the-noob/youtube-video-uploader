@@ -16,7 +16,10 @@ from authentication.auth_utils import (
     get_password_hash,
     authenticate_user
 )
-from authentication.jwt_utils import create_access_token
+from authentication.jwt_utils import (
+    create_access_token,
+    get_current_user
+)
 
 router = APIRouter()
 
@@ -71,3 +74,10 @@ async def user_login(db : db_dependency, form_data : Annotated[OAuth2PasswordReq
         'access_token' : token,
         'token_type' : 'bearer'
     })
+
+@router.get('/get-user')
+def get_user(db : db_dependency, user : Annotated[User, Depends(get_current_user)]):
+    return {
+        "user_id" : user.id,
+        "full_name" : user.full_name
+    }
