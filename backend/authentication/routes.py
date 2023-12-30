@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile, File
 from fastapi.responses import JSONResponse, Response
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -20,6 +20,7 @@ from authentication.jwt_utils import (
     create_access_token,
     get_current_user
 )
+from utils.file_saving import save_file
 
 router = APIRouter()
 
@@ -30,7 +31,7 @@ async def test():
     })
 
 @router.post('/create-account')
-async def user_register(user : UserRegister, db : db_dependency):
+async def user_register(db : db_dependency, user : UserRegister = Depends()):
     try:
         user_obj = db.query(User).filter(
             User.phone_number == user.phone_number
@@ -39,15 +40,17 @@ async def user_register(user : UserRegister, db : db_dependency):
             user_obj = User(
                 full_name=user.full_name,
                 phone_number=user.phone_number,
-                password=get_password_hash(user.password)
+                password=get_password_hash(user.password),
             )
+            user_obj.profile_picture = save_file(user.profile_picture)
             user_obj.save(db)
             return JSONResponse({
                 "message" : "User Created!",
                 "data" : {
                     "id" : user_obj.id,
                     "full_name" : user_obj.full_name,
-                    "phone_number" : user_obj.phone_number
+                    "phone_number" : user_obj.phone_number,
+                    "profile_picture" : user_obj.profile_picture
                 }
             })
         return JSONResponse({
@@ -79,5 +82,11 @@ async def user_login(db : db_dependency, form_data : Annotated[OAuth2PasswordReq
 def get_user(db : db_dependency, user : Annotated[User, Depends(get_current_user)]):
     return {
         "user_id" : user.id,
-        "full_name" : user.full_name
+        "full_name" : user.full_name,
+        "profile_picture" : user.profile_picture if user.profile_picture else None
     }
+
+
+@router.post('/profile-picture')
+async def add_profile_pic(file : UploadFile = File()):
+    ...

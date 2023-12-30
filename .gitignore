@@ -9,6 +9,9 @@ __pycache__/
 # database
 *.db
 
+media/ 
+media 
+
 # Distribution / packaging
 .Python
 build/

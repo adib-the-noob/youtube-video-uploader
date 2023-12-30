@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 
 # routers
@@ -11,6 +12,8 @@ from authentication.models import User
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI() 
+
+app.mount('/media', StaticFiles(directory='media'), name='media')
 app.include_router(auth_router)
  
 
