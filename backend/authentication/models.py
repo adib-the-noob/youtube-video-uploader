@@ -1,7 +1,14 @@
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String, Integer, Enum
 from utils.baseModels import BaseModelMixin
-
+from enum import Enum as PyEnum
 from db import Base, Session
+
+
+class UserType(PyEnum):
+    admin = "admin"
+    editor = "editor"
+    manager = "manager"
+
 
 class User(Base, BaseModelMixin):
     __tablename__ = "users"
@@ -10,6 +17,7 @@ class User(Base, BaseModelMixin):
     full_name = Column(String)
     email = Column(String, unique=True, nullable=True)
     phone_number = Column(String, unique=True, nullable=True)
+    user_type = Column(Enum(UserType), nullable=True, default=UserType.editor)
     profile_picture = Column(String, nullable=True)
     password = Column(String)
 

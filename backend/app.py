@@ -17,13 +17,6 @@ app.mount('/media', StaticFiles(directory='media'), name='media')
 app.include_router(auth_router)
  
 
-@app.get('/Bro')
-async def root():
-    return JSONResponse({
-        "message" : "welcome Bro!"
-    })  
-
-
 @app.on_event('startup')
 async def startup_event():
     create_db()
