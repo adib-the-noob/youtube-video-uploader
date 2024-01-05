@@ -13,11 +13,9 @@ class UserRegister(BaseModel):
     password : str = Form(...)
     phone_number : str = Form(...)
     password : str = Form(...)
-    profile_picture : Optional[UploadFile] = File(None)
-    user_type : UserType = UserType
+    profile_picture : UploadFile = File(None)
+    user_type : UserType 
 
-    class Config:
-        orm_mode = True
 
 class UserLogin(BaseModel):
     phone_number : str

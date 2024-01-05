@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, UploadFile, File
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
 from db import db_dependency
@@ -35,7 +35,7 @@ async def user_register(db: db_dependency, user: UserRegister = Depends()):
                         "id": user_obj.id,
                         "full_name": user_obj.full_name,
                         "phone_number": user_obj.phone_number,
-                        "user_type": user_obj.user_type,
+                        "user_type": str(user_obj.user_type),
                         "profile_picture": user_obj.profile_picture,
                     },
                 }
@@ -58,10 +58,10 @@ async def user_login(
 
 @router.get("/get-user")
 def get_user(db: db_dependency, user: Annotated[User, Depends(get_current_user)]):
-    return {
+    return JSONResponse({
         "user_id": user.id,
         "full_name": user.full_name,
         "phone_number": user.phone_number,
         "user_type": user.user_type,
         "profile_picture": user.profile_picture if user.profile_picture else None,
-    }
+    })

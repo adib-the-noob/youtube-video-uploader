@@ -1,4 +1,6 @@
 from sqlalchemy import Column, String, Integer, Enum
+from sqlalchemy.orm import relationship
+
 from utils.baseModels import BaseModelMixin
 from enum import Enum as PyEnum
 from db import Base, Session
@@ -20,6 +22,8 @@ class User(Base, BaseModelMixin):
     user_type = Column(Enum(UserType), nullable=True, default=UserType.editor)
     profile_picture = Column(String, nullable=True)
     password = Column(String)
+
+    workspace = relationship("Workspace", back_populates="user")
 
     def __str__(self):
         return f"{self.full_name}"

@@ -19,6 +19,8 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from authentication.models import User
+from workspace.models import Workspace
+
 from db import Base
 
 target_metadata = Base.metadata
